@@ -11,6 +11,5 @@
 		<h2>Leren fietsen met professionals</h2>
 		<img src='<c:url value="/images/logo.jpg"/>' alt='fietsers' id='logo' />
 	</header>
-	lol
 </body>
 </html>
