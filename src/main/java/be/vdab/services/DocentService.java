@@ -3,20 +3,26 @@ package be.vdab.services;
 import java.math.BigDecimal;
 import java.util.List;
 
+import be.vdab.dao.CampusDAO;
 import be.vdab.dao.DocentDAO;
 import be.vdab.entities.Docent;
+import be.vdab.exceptions.DocentBestaatAlException;
 import be.vdab.valueobjects.AantalDocentenPerWedde;
 import be.vdab.valueobjects.VoornaamEnId;
 
 public class DocentService {
 
 	private final DocentDAO docentDAO = new DocentDAO();
+	private final CampusDAO campusDAO = new CampusDAO();
 
 	public Docent read(long id) {
 		return docentDAO.read(id);
 	}
 
 	public void create(Docent docent) {
+		if (docentDAO.findByRijksRegisterNr(docent.getRijksRegisterNr()) != null) {
+			throw new DocentBestaatAlException();
+		}
 		docentDAO.beginTransaction();
 		docentDAO.create(docent);
 		docentDAO.commit();
@@ -78,6 +84,10 @@ public class DocentService {
 			docent.removeBijnaam(bijnaam);
 		}
 		docentDAO.commit();
+	}
+	
+	public List<Docent> findBestBetaaldeVanEenCampus(long id){
+		return docentDAO.findBestBetaaldeVanEenCampus(campusDAO.read(id));
 	}
 
 }
