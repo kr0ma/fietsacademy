@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import be.vdab.exceptions.RecordAangepastException;
 import be.vdab.services.DocentService;
 
 /**
@@ -41,13 +42,18 @@ public class OpslagServlet extends HttpServlet {
 				fouten.put("percentage", " tik een positief getal");
 			} else {
 				long id = Long.parseLong(request.getParameter("id"));
-				docentService.opslag(id, percentage);
-				response.sendRedirect(response.encodeRedirectURL(String.format(
-						REDIRECT_URL, request.getContextPath(), id)));
+				try {
+					docentService.opslag(id, percentage);
+					response.sendRedirect(response.encodeRedirectURL(String.format(
+							REDIRECT_URL, request.getContextPath(), id)));
+				} catch (RecordAangepastException ex){
+					fouten.put("percentage", "een andere gebruiker heeft deze docent gewijzigd");
+				}				
 			}
 		} catch (NumberFormatException ex) {
 			fouten.put("percentage", "tik een positief getal");
 		}
+		
 		if (!fouten.isEmpty()) {
 			request.setAttribute("fouten", fouten);
 			request.getRequestDispatcher(VIEW).forward(request, response);

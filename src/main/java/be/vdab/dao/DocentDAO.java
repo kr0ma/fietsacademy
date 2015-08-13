@@ -3,6 +3,7 @@ package be.vdab.dao;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 
 import be.vdab.entities.Campus;
@@ -14,6 +15,11 @@ public class DocentDAO extends AbstractDAO {
 
 	public Docent read(long id) {
 		return getEntityManager().find(Docent.class, id);
+	}
+	
+	public Docent readWithLock(long id) {
+		return getEntityManager().find(Docent.class, id,
+		LockModeType.PESSIMISTIC_WRITE);
 	}
 
 	public void create(Docent docent) {
